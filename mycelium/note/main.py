@@ -20,8 +20,7 @@ def create_new_note():
 def list_notes():
     """List all notes."""
     repo = Repository()
-    for note_file in repo.path.glob(f'*.{FILE_EXTENSION}'):
-        print(note_file.stem)
+    print([str(i) for i in repo.get_list()])
 
 
 def print_note(index: int = -1):

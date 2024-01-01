@@ -66,6 +66,7 @@ class Repository(BaseModel):
     you can think of it like a color channel in an image
     """
     path: Path = PATH_NOTES
+    extension: str = FILE_EXTENSION
 
     def ensure_exists(self, autocreate: bool = False) -> None:
         msg = "The specified path does not exist."
@@ -85,11 +86,16 @@ class Repository(BaseModel):
     def get_last_index(self) -> int:
         highest_num = max(
             (
-                int(p.stem) for p in self.path.glob(
-                    f'*.{FILE_EXTENSION}'
-                )
+                int(p.stem) for p in self.get_list()
                 if p.stem.isdigit()
             ),
             default=0
         )
         return highest_num
+
+    def get_list(self) -> list[Path]:
+        return list(
+            self.path.glob(
+                f"*.{self.extension}"
+            )
+        )
