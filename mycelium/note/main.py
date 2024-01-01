@@ -13,7 +13,7 @@ FILE_EXTENSION = "md"
 def create_new_note():
     """Create and open a new note, default action."""
     repo = Repository()
-    new_note = Note.from_repository(repo)
+    new_note = Note.new(repo)
     new_note.open()
 
 
@@ -27,20 +27,14 @@ def list_notes():
 def print_note(index: int = -1):
     """Read a specific note by index."""
     repo = Repository()
-    if index <= -1:
-        last = repo.get_last_index()
-        index = last + index + 1
-    note = Note(repo=repo, index=index)
+    note = Note.from_repository(repo=repo, index=index)
     print(note.read_content())
 
 
 def edit_note(index: int = -1):
     """Edit a specific note by index."""
     repo = Repository()
-    if index <= -1:
-        last = repo.get_last_index()
-        index = last + index + 1
-    note = Note(repo=repo, index=index)
+    note = Note.from_repository(repo=repo, index=index)
     note.open()
 
 

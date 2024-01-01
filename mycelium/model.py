@@ -45,8 +45,17 @@ class Note(Node):
             f.write(content)
 
     @classmethod
-    def from_repository(cls, repo: "Repository") -> "Note":
-        index = repo.get_last_index() + 1
+    def from_repository(cls, repo: "Repository", index=-1) -> "Note":
+        if index <= -1:
+            last = repo.get_last_index()
+            index = last + index + 1
+        note = cls(index=index, repo=repo)
+        return note
+
+    @classmethod
+    def new(cls, repo: "Repository") -> "Note":
+        last = repo.get_last_index()
+        index = last + 1
         note = cls(index=index, repo=repo)
         return note
 
