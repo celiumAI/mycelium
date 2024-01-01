@@ -20,7 +20,7 @@ def create_new_note():
 def list_notes():
     """List all notes."""
     repo = Repository()
-    print([str(i) for i in repo.get_list()])
+    print(repo.elements)
 
 
 def print_note(index: int = -1):
@@ -47,11 +47,11 @@ def delete_note(index: int):
 def search_notes(term: str):
     """Search for a term in all notes."""
     repo = Repository()
-    for note_file in repo.path.glob(f'*.{FILE_EXTENSION}'):
-        note = Note(repo=repo, index=int(note_file.stem))
+    for index in repo.elements:
+        note = Note(repo=repo, index=index)
         content = note.read_content()
         if term.lower() in content.lower():
-            print(f"Found in {note_file.stem}:")
+            print(f"Found in {note.path.stem}:")
             print(content)
             print("-" * 20)
 

@@ -85,17 +85,29 @@ class Repository(BaseModel):
 
     def get_last_index(self) -> int:
         highest_num = max(
-            (
-                int(p.stem) for p in self.get_list()
-                if p.stem.isdigit()
-            ),
+            self.element_indices,
             default=0
         )
         return highest_num
 
-    def get_list(self) -> list[Path]:
-        return list(
-            p.stem for p in self.path.glob(
+    @property
+    def element_indices(self) -> list[int]:
+        elements = list(
+            int(p.stem) for p in self.path.glob(
                 f"*.{self.extension}"
             )
         )
+        elements = sorted(elements)
+        return elements
+
+    @property
+    def elements(self) -> list:
+        indices = self.element_indices
+        if self.extension == "md":
+            elements = [
+                Note.from_repository(
+                    self, index
+                )
+                for index in indices
+            ]
+        return elements
