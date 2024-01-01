@@ -6,7 +6,7 @@ setup(
     packages=find_packages(),
     entry_points={
         'console_scripts': [
-            'note=note.main:cli',
+            'note=mycelium.note.main:cli',
         ],
     },
     install_requires=[
