@@ -95,7 +95,7 @@ class Repository(BaseModel):
 
     def get_list(self) -> list[Path]:
         return list(
-            self.path.glob(
+            p.stem for p in self.path.glob(
                 f"*.{self.extension}"
             )
         )
