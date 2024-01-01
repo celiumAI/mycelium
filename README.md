@@ -1,29 +1,35 @@
-# note
+# mycelium
 
-this just helps you have all your notes in one location
-
-it also will get a lot of llm features to help you with publishing your ideas
-
-keep an eye out for [mycelium](https://github.com/hyphalnet/mycelium)
+this connects and evolves your original work
 
 ## how it works
 
-install note
+think of your personal notes as spores
 
-you just need to type `note` in your command line
+they are randomly placed in an environment
 
-and then just type out your idea or thought or whatever you want to note
+from there they grow using llms to transform your original work
 
-for now it will just be written to the $HOME/notes/notes directory
+at some point they encounter another spore or its derivatives
 
-they serve as the seeds for whatever comes out of the ideas
+from there the mycelial network updates and grows towards your emerging goal
 
-## plugins
+## future applications
 
-you can use your notes as inputs to langchain
+this must be connected to autonomous agents
 
-1. write a function
-2. take the note as an input
-3. do an arbitrary manipulation to it
+they can build subgraphs by retrieving only relevant information
 
-stonks
+its building containers of knowledge
+
+but makes it available to the entire network
+
+## contribute
+
+this will always be free
+
+so if you want to use it, just write down improvement ideas
+
+feel free to open issues on anything you want
+
+feel free to open pullrequests
