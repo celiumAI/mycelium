@@ -36,6 +36,21 @@ class Repository(BaseModel):
     """repository in which notes exist"""
     path: Path = PATH_NOTES
 
+    def ensure_exists(self, autocreate: bool = False) -> None:
+        msg = "The specified path does not exist."
+        if not self.path.is_dir():
+            if not autocreate:
+                user_input = input(
+                    'Path does not exist. Do you want to create it? (y/n): '
+                )
+                if user_input.lower() == 'y':
+                    self.path.mkdir(parents=True, exist_ok=True)
+                    msg = "The specified path has been created."
+            else:
+                self.path.mkdir(parents=True, exist_ok=True)
+        if not self.path.is_dir():
+            raise ValueError(msg)
+
     def get_last_index(self) -> int:
         highest_num = max(
             (
