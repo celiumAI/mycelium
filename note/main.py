@@ -20,6 +20,10 @@ class Note(BaseModel):
     def path(self) -> Path:
         return self.repo.path / f"{self.index}.{FILE_EXTENSION}"
 
+    @property
+    def content(self) -> str:
+        return self.read_content()
+
     def open(self, editor: str = EDITOR):
         subprocess.run([editor, str(self.path)])
 
