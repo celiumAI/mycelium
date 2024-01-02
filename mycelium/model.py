@@ -1,5 +1,4 @@
 import os
-import subprocess
 from pathlib import Path
 from pydantic import BaseModel
 
@@ -19,9 +18,13 @@ class Node(BaseModel):
         return self.repo.path / f"{self.index}.{self.repo.extension}"
 
     @property
-    def raw(self):
-        """printable raw content of the node"""
-        return self.read()
+    def exists(self) -> bool:
+        return self.path.exists()
+
+    @property
+    def metadata(self) -> str:
+        """printable verbose metadata of the node"""
+        raise NotImplementedError()
 
     @property
     def meta(self) -> str:
@@ -33,7 +36,7 @@ class Node(BaseModel):
         raise NotImplementedError()
 
     @classmethod
-    def from_repository(cls, repo: "Repository", index=-1) -> "Node":
+    def from_repository(cls, repo: "Repository", index=-1):
         """load node from repo"""
         if index <= -1:
             last = repo.get_last_index()
@@ -44,6 +47,10 @@ class Node(BaseModel):
     @classmethod
     def new(cls, repo: "Repository"):
         """create a new node in repo"""
+        raise NotImplementedError()
+
+    def write(self):
+        """write node to file"""
         raise NotImplementedError()
 
     def read(self):

@@ -28,7 +28,7 @@ def print_note(index: int = -1) -> str:
     """Read a specific note by index."""
     repo = Repository()
     note = Note.from_repository(repo=repo, index=index)
-    return note.meta()
+    return note.meta
 
 
 def edit_note(index: int = -1):
@@ -44,7 +44,7 @@ def search_notes(term: str):
     result = ""
     for index in repo.index_nodes:
         note = Note(repo=repo, index=index)
-        content = str(note)
+        content = note.meta
         if term.lower() in content:
             result += content
     return result
