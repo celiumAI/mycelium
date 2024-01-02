@@ -19,26 +19,36 @@ class Node(BaseModel):
         return self.repo.path / f"{self.index}.{self.repo.extension}"
 
     @property
-    def content(self) -> str:
+    def load(self) -> str:
         raise NotImplementedError("you need to implement a content property")
 
 
 class Note(Node):
     """note model"""
+    def formatted(self) -> str:
+        result = "---\n"
+        result += f"note {self.path.stem}:\n\n"
+        result += self.content
+        result += "\n---\n"
+        return result
+
+    def __str__(self) -> str:
+        return self.content
+
     @property
     def content(self) -> str:
-        return self.read_content()
+        return self.read()
 
     def open(self, editor: str = EDITOR):
         subprocess.run([editor, str(self.path)])
 
-    def read_content(self) -> str:
+    def read(self) -> str:
         with open(self.path, "r") as f:
             return f.read()
 
-    def write_content(self, content: str) -> None:
+    def write(self) -> None:
         with open(self.path, "w") as f:
-            f.write(content)
+            f.write(str(self))
 
     @classmethod
     def from_repository(cls, repo: "Repository", index=-1) -> "Note":
@@ -81,13 +91,13 @@ class Repository(BaseModel):
 
     def get_last_index(self) -> int:
         highest_num = max(
-            self.element_indices,
+            self.index_nodes,
             default=0
         )
         return highest_num
 
     @property
-    def element_indices(self) -> list[int]:
+    def index_nodes(self) -> list[int]:
         elements = list(
             int(p.stem) for p in self.path.glob(
                 f"*.{self.extension}"
@@ -97,8 +107,8 @@ class Repository(BaseModel):
         return elements
 
     @property
-    def elements(self) -> list:
-        indices = self.element_indices
+    def nodes(self) -> list:
+        indices = self.index_nodes
         if self.extension == "md":
             elements = [
                 Note.from_repository(
@@ -108,7 +118,7 @@ class Repository(BaseModel):
             ]
         return elements
 
-    def new_element(self) -> Node | Note:
+    def new_node(self) -> Node | Note:
         if self.extension == "md":
             return Note.new(self)
         if self.extension == "embedding":
