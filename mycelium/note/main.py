@@ -1,7 +1,8 @@
 import os
 import sys
 from pathlib import Path
-from ..model import Note, Repository
+from ..model import Repository
+from .model import Note
 import fire
 
 # default location

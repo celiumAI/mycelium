@@ -4,7 +4,7 @@ def test_create_new_note(mocker):
     """Create a new note."""
     mock = mocker.patch("subprocess.run")
     create_new_note()
-    assert mock.called
+    mock.assert_called_once()
 
 def test_list_notes():
     """List all notes."""
