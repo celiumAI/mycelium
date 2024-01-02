@@ -1,3 +1,5 @@
 langchain
 fire
 pydantic
+llama_index
+annoy

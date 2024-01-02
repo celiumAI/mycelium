@@ -64,6 +64,7 @@ class Repository(BaseModel):
     """
     path: Path = PATH_NOTES
     extension: str = FILE_EXTENSION
+    node_type: type[Node]
 
     def ensure_exists(self, autocreate: bool = False) -> None:
         msg = "The specified path does not exist."
@@ -98,15 +99,15 @@ class Repository(BaseModel):
         return elements
 
     @property
-    def nodes(self) -> list:
+    def nodes(self) -> list["node_type"]:
         indices = self.index_nodes
         elements = [
-            Node.from_repository(
+            self.node_type.from_repository(
                 self, index
             )
             for index in indices
         ]
         return elements
 
-    def new_node(self) -> Node:
-        return Node.new(self)
+    def new_node(self) -> "node_type":
+        return self.node_type.new(self)
