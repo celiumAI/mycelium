@@ -16,7 +16,7 @@ class Node(BaseModel):
 
     @property
     def path(self) -> Path:
-        raise NotImplementedError("you need to implement a path property")
+        return self.repo.path / f"{self.index}.{self.repo.extension}"
 
     @property
     def content(self) -> str:
@@ -25,10 +25,6 @@ class Node(BaseModel):
 
 class Note(Node):
     """note model"""
-    @property
-    def path(self) -> Path:
-        return self.repo.path / f"{self.index}.{FILE_EXTENSION}"
-
     @property
     def content(self) -> str:
         return self.read_content()
@@ -111,3 +107,9 @@ class Repository(BaseModel):
                 for index in indices
             ]
         return elements
+
+    def new_element(self) -> Node | Note:
+        if self.extension == "md":
+            return Note.new(self)
+        if self.extension == "embedding":
+            return Node.new(self)
