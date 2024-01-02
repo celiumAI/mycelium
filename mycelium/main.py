@@ -36,32 +36,14 @@ class Embedding(Node):
         embedding = np.array(content)
         np.savetxt(self.path, embedding)
 
-
-def embed_note(note: Note):
-    embedder = OllamaEmbeddings(
-        base_url=BASE_URL_OLLAMA, model=MODEL_EMBEDDING
-    )
-    content = note.read()
-    embedding = embedder.embed_documents([content])[0]
-    return embedding
-
-
-def embed_notes(repo: Repository) -> list[float]:
-    embeddings = []
-    for node in repo.nodes():
-        embeddings.append(embed_note(node))
-    return embeddings
-
-
-def save_embedding(repo_embeddings, embedding, index):
-    print(repo_embeddings)
-    node_embedding = Embedding(
-        index=index,
-        repo=repo_embeddings,
-    )
-    node_embedding.write(embedding)
-    print(node_embedding)
-
+    @staticmethod
+    def embed(node: Node) -> list[float]:
+        embedder = OllamaEmbeddings(
+            base_url=BASE_URL_OLLAMA, model=MODEL_EMBEDDING
+        )
+        content = node.read()
+        embedding = embedder.embed_documents([content])[0]
+        return embedding
 
 def main():
     repo_notes = Repository()
@@ -73,12 +55,15 @@ def main():
     repo_embeddings.ensure_exists()
     for node in repo_notes.nodes:
         note = Note.from_repository(repo_notes, index=node.index)
-        print(type(note))
-        print(note.metadata)
-        print(note.read())
-        embedding = embed_note(note)
-        save_embedding(repo_embeddings, embedding, note.index)
-    print("done")
+        node_embedding = Embedding(
+            index=node.index,
+            repo=repo_embeddings,
+        )
+        if node_embedding.exists:
+            print(f"skipped {node.index}")
+            continue
+        embedding = Embedding.embed(note)
+        node_embedding.write(embedding)
 
 if __name__ == "__main__":
     main()
