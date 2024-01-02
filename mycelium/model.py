@@ -19,27 +19,49 @@ class Node(BaseModel):
         return self.repo.path / f"{self.index}.{self.repo.extension}"
 
     @property
-    def load(self) -> str:
-        raise NotImplementedError("you need to implement a content property")
+    def raw(self):
+        """printable raw content of the node"""
+        raise NotImplementedError()
 
+    @property
+    def meta(self) -> str:
+        """printable verbose content of the node"""
+        raise NotImplementedError()
+
+    @property
+    def edit(self) -> str:
+        """edit the raw content of the node"""
+        raise NotImplementedError()
+
+    @classmethod
+    def from_repository(cls, repo: "Repository", index=-1) -> "Node":
+        """load node from repo"""
+        raise NotImplementedError()
+
+    @classmethod
+    def new(cls, repo: "Repository") -> "Node":
+        """create a new node in repo"""
+        raise NotImplementedError()
 
 class Note(Node):
     """note model"""
-    def formatted(self) -> str:
-        result = "---\n"
-        result += f"note {self.path.stem}:\n\n"
-        result += self.content
-        result += "\n---\n"
+    def meta(self) -> str:
+        result = "```markdown\n"
+        result += f"---\n"
+        result += f"note: {self.path.stem}\n"
+        result += "---\n\n"
+        result += self.raw
+        result += "\n```\n"
         return result
 
     def __str__(self) -> str:
-        return self.content
+        return self.raw
 
     @property
-    def content(self) -> str:
+    def raw(self) -> str:
         return self.read()
 
-    def open(self, editor: str = EDITOR):
+    def edit(self, editor: str = EDITOR):
         subprocess.run([editor, str(self.path)])
 
     def read(self) -> str:

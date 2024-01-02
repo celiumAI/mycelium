@@ -14,7 +14,7 @@ def create_new_note() -> None:
     """Create and open a new note, default action."""
     repo = Repository()
     new_note = Note.new(repo)
-    new_note.open()
+    new_note.edit()
 
 
 def list_notes() -> list:
@@ -27,14 +27,14 @@ def print_note(index: int = -1) -> str:
     """Read a specific note by index."""
     repo = Repository()
     note = Note.from_repository(repo=repo, index=index)
-    return str(note)
+    return note.meta()
 
 
 def edit_note(index: int = -1):
     """Edit a specific note by index."""
     repo = Repository()
     note = Note.from_repository(repo=repo, index=index)
-    note.open()
+    note.edit()
 
 
 def search_notes(term: str):
