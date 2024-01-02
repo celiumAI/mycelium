@@ -10,24 +10,24 @@ EDITOR = os.getenv('EDITOR', 'notepad' if os.name == 'nt' else 'vim')
 FILE_EXTENSION = "md"
 
 
-def create_new_note():
+def create_new_note() -> None:
     """Create and open a new note, default action."""
     repo = Repository()
     new_note = Note.new(repo)
     new_note.open()
 
 
-def list_notes():
+def list_notes() -> list:
     """List all notes."""
     repo = Repository()
-    print(repo.elements)
+    return repo.nodes
 
 
-def print_note(index: int = -1):
+def print_note(index: int = -1) -> str:
     """Read a specific note by index."""
     repo = Repository()
     note = Note.from_repository(repo=repo, index=index)
-    print(note.read_content())
+    return note.read_content()
 
 
 def edit_note(index: int = -1):
@@ -37,23 +37,19 @@ def edit_note(index: int = -1):
     note.open()
 
 
-def delete_note(index: int):
-    """Delete a specific note by index."""
-    repo = Repository()
-    note = Note(repo=repo, index=index)
-    os.remove(note.path)
-
-
 def search_notes(term: str):
     """Search for a term in all notes."""
     repo = Repository()
-    for index in repo.elements:
+    result = ""
+    for index in repo.index_nodes:
         note = Note(repo=repo, index=index)
         content = note.read_content()
         if term.lower() in content.lower():
-            print(f"Found in {note.path.stem}:")
-            print(content)
-            print("-" * 20)
+            result += "---\n"
+            result += f"{note.path.stem}:\n\n"
+            result += content
+            result += "\n---"
+    return result
 
 
 def cli():
@@ -67,7 +63,6 @@ def cli():
         'list': list_notes,
         'print': print_note,
         'edit': edit_note,
-        'delete': delete_note,
         'search': search_notes,
         'repository': Repository,
     })
