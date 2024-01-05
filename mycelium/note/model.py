@@ -34,9 +34,9 @@ class Note(Node):
         with open(self.path, "r") as f:
             return f.read()
 
-    def write(self) -> None:
+    def write(self, content) -> None:
         with open(self.path, "w") as f:
-            f.write(str(self))
+            f.write(content)
 
     @classmethod
     def new(cls, repo: Repository) -> "Note":

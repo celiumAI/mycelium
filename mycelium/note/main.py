@@ -21,6 +21,12 @@ def create_new_note() -> None:
     new_note = repo.new_node()
     new_note.edit()
 
+def write_new_note(content: str) -> None:
+    """Create a new note with the given content and open it."""
+    repo = get_repo_notes()
+    new_note = repo.new_node()
+    new_note.write(content)
+    new_note.edit()
 
 def list_notes() -> list:
     """List all notes."""
@@ -62,6 +68,7 @@ def cli():
 
     fire.Fire({
         'new': create_new_note,
+        'write': write_new_note,
         'list': list_notes,
         'print': print_note,
         'edit': edit_note,
