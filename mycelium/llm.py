@@ -3,13 +3,11 @@ import requests
 
 LLM_MODEL = "rephrase"
 
-
 def chat(messages, model=LLM_MODEL):
     r = requests.post(
-        "http://0.0.0.0:11434/api/chat",
+        "http://localhost:11434/api/chat",
         json={"model": model, "messages": messages, "stream": True},
     )
-    r.raise_for_status()
     output = ""
 
     for line in r.iter_lines():

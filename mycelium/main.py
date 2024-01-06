@@ -1,37 +1,41 @@
-from llama_index import VectorStoreIndex
-from .embed import embed_nodes, Embedding
 from .model import Repository
 from .note.model import Note
-from annoy import AnnoyIndex
-
-N_TREES = 10
-
-def get_index(embeddings: list[Embedding]):
-    f = len(embeddings[0].read())
-
-    t = AnnoyIndex(f, 'angular')
-    for i in range(len(embeddings)):
-        v = embeddings[i].read()
-        t.add_item(i, v)
-
-    t.build(20) # 10 trees
-
-    return t
-
-def main():
-    repo_notes = Repository(node_type=Note)
-    repo_embeddings = embed_nodes(repo_notes)
-    nodes_embedded = repo_embeddings.nodes
-    index = get_index(nodes_embedded)
-    note = repo_notes.nodes[0]
-    note_embedding = repo_embeddings.nodes[0]
-    similar = index.get_nns_by_vector(note_embedding.read(), 3)
-    for i in similar:
-        note_similar = repo_notes.nodes[i+1]
-        print(repr(note_similar.read()))
-
-    print(note.read())
+from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
+from langchain.llms import Ollama
+from crewai import Agent, Task, Crew, Process
 
 
-if __name__ == "__main__":
-    main()
+repo_notes = Repository(node_type=Note)
+repo_questions = Repository(node_type=Note, path=repo_notes.path.parent / 'concepts')
+repo_questions.ensure_exists()
+
+llm = Ollama(model="mistral:instruct")
+
+
+notes = repo_notes.nodes
+for note in notes:
+    = Agent(
+    role='research manager',
+    goal="find an insteresting research question that could result in someone writing the following text",
+    backstory="""You are a Senior Research Analyst at a leading tech think tank.
+  Your expertise lies in identifying emerging trends from plain text dumps. You have a knack for dissecting complex data and presenting
+  actionable insights.""",
+    tools=[],
+    llm=llm,
+    verbose=True
+    )
+    prompt_find_question = """find an insteresting research question that could result in someone writing the following text: """
+
+    messages = [
+        SystemMessage(content=""),
+        HumanMessage(content=prompt_find_question + note.read()),
+    ]
+
+    response = llm(messages)
+    message_ai = AIMessage(content=response)
+    print(message_ai.content)
+    
+
+    prompt_find_solution = """propose a better solution to the problem and how it could be implemented in a agile framework that contains 5 or less levels of abstraction from the main idea down to specific function definitions."""
+    prompt_improve_solution = """improve the solution. you must think outside of the box and find non mainstream solutions. the goal is to replace programmers with large language models. so now first read the text"""
+    exit()

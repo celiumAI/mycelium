@@ -4,6 +4,7 @@ from pathlib import Path
 from ..model import Repository
 from .model import Note
 import fire
+import uvicorn
 
 # default location
 PATH_NOTES = os.getenv("PATH_NOTES", Path.home() / "notes" / "notes")
@@ -21,12 +22,13 @@ def create_new_note() -> None:
     new_note = repo.new_node()
     new_note.edit()
 
-def write_new_note(content: str) -> None:
+def write_new_note(content: str, silent: str=True) -> None:
     """Create a new note with the given content and open it."""
     repo = get_repo_notes()
     new_note = repo.new_node()
     new_note.write(content)
-    new_note.edit()
+    if not silent:
+        new_note.edit()
 
 def list_notes() -> list:
     """List all notes."""
@@ -60,6 +62,30 @@ def search_notes(term: str):
     return result
 
 
+def serve():
+    from fastapi import FastAPI, HTTPException
+    from pydantic import BaseModel
+
+    app = FastAPI()
+
+    class Note(BaseModel):
+        text: str
+
+    def process_text(text: str) -> str:
+        write_new_note(text)
+        return f"Processed text: {text}"
+
+    @app.post("/")
+    async def process(note: Note):
+        try:
+            result = process_text(note.text)
+            return {"result": result}
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+    uvicorn.run(app, host="localhost", port=8200)
+
+
 def cli():
     """CLI entry point."""
     if len(sys.argv) == 1:
@@ -73,5 +99,6 @@ def cli():
         'print': print_note,
         'edit': edit_note,
         'search': search_notes,
+        'serve': serve,
         'repository': Repository,
     })
